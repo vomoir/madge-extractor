@@ -7,13 +7,6 @@
   "bin": {
     "extract-dependencies": "./dependency-extractor.js"
   },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
-  },
   "keywords": [
     "madge",
     "dependency",
