@@ -30,6 +30,8 @@ Will output this json file:
 ```
 
 ## To get complete copy of the component and its dependencies:
+Install the cli tool:
+ `npx madge-dependency-extractor`
 Usage: node dependency-extractor.js <sourcePath> <outputPath>
 
 eg:
