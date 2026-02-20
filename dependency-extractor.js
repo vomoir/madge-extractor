@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import path from "path";
 import fs, { rmSync } from "fs";
 import madge from "madge";
@@ -10,37 +11,42 @@ const saveMadgeReports = async (res, outputDir, baseName) => {
   const circular = res.circular();
   const date = new Date().toLocaleDateString();
 
-let markdown = "# Dependency Report: " + baseName + "\n";
+  let markdown = "# Dependency Report: " + baseName + "\n";
 
-markdown += "*Generated on " + date + "*\n\n";
+  markdown += "*Generated on " + date + "*\n\n";
 
-markdown += "## Summary\n";
-markdown += "* **Total Files:** " + Object.keys(deps).length + "\n";
+  markdown += "## Summary\n";
+  markdown += "* **Total Files:** " + Object.keys(deps).length + "\n";
 
-markdown += "* **Circular Dependencies:** " +
-  (circular.length > 0 ? "⚠️ " + circular.length : "✅ None") +
-  "\n\n";
+  markdown +=
+    "* **Circular Dependencies:** " +
+    (circular.length > 0 ? "⚠️ " + circular.length : "✅ None") +
+    "\n\n";
 
-markdown += "## Dependency Details\n";
-markdown += "| File | Depends On |\n";
-markdown += "| :--- | :--- |\n";
+  markdown += "## Dependency Details\n";
+  markdown += "| File | Depends On |\n";
+  markdown += "| :--- | :--- |\n";
 
-Object.entries(deps).forEach(function ([file, childDeps]) {
-  const depList =
-    childDeps.length > 0
-      ? childDeps.map(function (d) { return "`" + d + "`"; }).join(", ")
-      : "_None_";
+  Object.entries(deps).forEach(function ([file, childDeps]) {
+    const depList =
+      childDeps.length > 0
+        ? childDeps
+            .map(function (d) {
+              return "`" + d + "`";
+            })
+            .join(", ")
+        : "_None_";
 
-  markdown += "| `" + file + "` | " + depList + " |\n";
-});
+    markdown += "| `" + file + "` | " + depList + " |\n";
+  });
 
   // 2. Prepare Paths
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  const jsonPath = path.join(outputDir, baseName + '.json');
-  const mdPath = path.join(outputDir, baseName + '.md');
+  const jsonPath = path.join(outputDir, baseName + ".json");
+  const mdPath = path.join(outputDir, baseName + ".md");
 
   // 3. Write Files
   fs.writeFileSync(jsonPath, JSON.stringify(deps, null, 2));
@@ -58,7 +64,7 @@ const syncDependencies = (absolutePaths, sourceRoot, targetDir) => {
     try {
       // Check if file exists
       if (!fs.existsSync(srcPath)) {
-        console.error('File missing (skipped): ' + srcPath);
+        console.error("File missing (skipped): " + srcPath);
         missingCount++;
         return;
       }
@@ -80,7 +86,7 @@ const syncDependencies = (absolutePaths, sourceRoot, targetDir) => {
       const importRegex = /(from|import)\s+(['"])((\.\.?\/)+.*)\.js(['"])/g;
       if (srcPath.match(/\.(js|jsx)$/)) {
         content = content.replace(importRegex, (match, p1, p2, p3, p4, p5) => {
-          return p1 + ' ' + p2 + p3 + '.jsx' + p5;
+          return p1 + " " + p2 + p3 + ".jsx" + p5;
         });
       }
       const destFolder = path.dirname(destPath);
@@ -90,13 +96,13 @@ const syncDependencies = (absolutePaths, sourceRoot, targetDir) => {
       fs.writeFileSync(destPath, content);
       copiedCount++;
     } catch (err) {
-      console.error('Failed to copy ' + srcPath + ': ' + err.message);
+      console.error("Failed to copy " + srcPath + ": " + err.message);
     }
   });
 
-  console.log('\nFinal Sync Report:');
-  console.log('✅ Copied: ' + copiedCount);
-  if (missingCount > 0) console.warn('⚠️ Missing: ' + missingCount);
+  console.log("\nFinal Sync Report:");
+  console.log("✅ Copied: " + copiedCount);
+  if (missingCount > 0) console.warn("⚠️ Missing: " + missingCount);
 };
 
 const findCommonBase = (files) => {
@@ -126,12 +132,14 @@ async function run() {
   const outputPath = args[1];
 
   if (!sourcePath || !outputPath) {
-    console.error("Usage: node dependency-extractor.js <sourcePath> <outputPath>");
+    console.error(
+      "Usage: node dependency-extractor.js <sourcePath> <outputPath>",
+    );
     process.exit(1);
   }
 
   if (!fs.existsSync(sourcePath)) {
-    console.error('File not found: ' + sourcePath);
+    console.error("File not found: " + sourcePath);
     return;
   }
 
@@ -139,20 +147,22 @@ async function run() {
   const finalTarget = path.join(outputPath, componentName);
 
   if (fs.existsSync(finalTarget)) {
-    console.log('🧹 Cleaning up old extraction at ' + finalTarget + '...');
+    console.log("🧹 Cleaning up old extraction at " + finalTarget + "...");
     try {
       rmSync(finalTarget, { recursive: true, force: true });
     } catch (err) {
-      console.error('\n❌ Could not clean up ' + finalTarget);
-      console.error('   ' + err.message);
+      console.error("\n❌ Could not clean up " + finalTarget);
+      console.error("   " + err.message);
       if (err.code === "EPERM" || err.code === "EACCES") {
-        console.error("   💡 You may not have write permissions for this folder.");
+        console.error(
+          "   💡 You may not have write permissions for this folder.",
+        );
       }
       process.exit(1);
     }
   }
 
-  console.log('🚀 Analyzing ' + componentName + '...');
+  console.log("🚀 Analyzing " + componentName + "...");
   try {
     const res = await madge(sourcePath, {
       baseDir: path.dirname(sourcePath),
@@ -170,7 +180,7 @@ async function run() {
     });
 
     const commonBase = findCommonBase(absoluteList);
-    console.log('📍 Common Base identified: ' + commonBase);
+    console.log("📍 Common Base identified: " + commonBase);
 
     const assetExtensions = [".css", ".scss", ".sass", ".svg", ".png", ".jpg"];
     const expandedList = new Set(absoluteList);
@@ -180,39 +190,44 @@ async function run() {
       if (fs.existsSync(dir)) {
         const siblings = fs.readdirSync(dir);
         siblings.forEach((file) => {
-            const ext = path.extname(file).toLowerCase();
-            if (assetExtensions.includes(ext)) {
-                expandedList.add(path.resolve(dir, file));
-            }
+          const ext = path.extname(file).toLowerCase();
+          if (assetExtensions.includes(ext)) {
+            expandedList.add(path.resolve(dir, file));
+          }
         });
       }
     });
 
     const finalCopyList = Array.from(expandedList);
-    console.log('🎨 Added ' + (finalCopyList.length - absoluteList.length) + ' assets (CSS/SVGs) to the queue.');
-    
+    console.log(
+      "🎨 Added " +
+        (finalCopyList.length - absoluteList.length) +
+        " assets (CSS/SVGs) to the queue.",
+    );
+
     syncDependencies(finalCopyList, commonBase, finalTarget);
 
     await saveMadgeReports(res, finalTarget, componentName);
 
-    console.log('✅ Reports saved to: ' + finalTarget);
+    console.log("✅ Reports saved to: " + finalTarget);
     console.log("\n" + "=".repeat(40));
     console.log("🚀 EXTRACTION COMPLETE!");
     console.log("=".repeat(40));
-    console.log('📍 Location: ' + finalTarget);
+    console.log("📍 Location: " + finalTarget);
     console.log("=".repeat(40));
-    console.log('To view your component:');
+    console.log("To view your component:");
     console.log('→   cd "' + finalTarget + '"');
-    console.log('You may need to install missing dependencies manually.');
-
+    console.log("You may need to install missing dependencies manually.");
   } catch (err) {
     if (err.code === "EPERM" || err.code === "EACCES") {
-      console.error('\n❌ Permission denied while writing files!');
-      console.error('   Destination: ' + finalTarget);
-      console.error("   💡 Please check you have write access to this location.");
+      console.error("\n❌ Permission denied while writing files!");
+      console.error("   Destination: " + finalTarget);
+      console.error(
+        "   💡 Please check you have write access to this location.",
+      );
       process.exit(1);
     }
-    console.error('Failed to process reports: ' + err.message);
+    console.error("Failed to process reports: " + err.message);
   }
 }
 

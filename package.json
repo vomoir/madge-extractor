@@ -5,14 +5,14 @@
   "type": "module",
   "main": "dependency-extractor.js",
   "bin": {
-    "extract-dependencies": "./dependency-extractor.js"
+    "madge-dependency-extractor": "dependency-extractor.js"
   },
   "keywords": [
     "madge",
     "dependency",
     "extractor"
   ],
-  "author": "",
+  "author": "Tony Edwards",
   "license": "ISC",
   "dependencies": {
     "madge": "^7.0.0"
