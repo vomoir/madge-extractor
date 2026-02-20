@@ -1,0 +1,27 @@
+{
+  "name": "madge-dependency-extractor",
+  "version": "1.0.0",
+  "description": "Extracts a component and its dependencies to a new location.",
+  "type": "module",
+  "main": "dependency-extractor.js",
+  "bin": {
+    "extract-dependencies": "./dependency-extractor.js"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [
+    "madge",
+    "dependency",
+    "extractor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "madge": "^7.0.0"
+  }
+}
