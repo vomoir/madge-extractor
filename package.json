@@ -1,6 +1,6 @@
 {
   "name": "madge-dependency-extractor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extracts a component and its dependencies to a new location.",
   "type": "module",
   "main": "dependency-extractor.js",
