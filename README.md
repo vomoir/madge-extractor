@@ -37,7 +37,7 @@ Usage: node dependency-extractor.js <sourcePath> <outputPath>
 eg:
 `node dependency-extractor.js "C:\Users\USERNAME\code\LibraryListerUI\src\components\BookDisplayCard.jsx" "C:\Users\USERNAME\Documents\copied-book_display_card"`
 
-Will create a compete file anf folder list of the dependencies of the specified component:
+This will create a complete file and folder list of the dependencies of the specified component:
 ```
 +---BookDisplayCard
     ¦   BookDisplayCard.json
